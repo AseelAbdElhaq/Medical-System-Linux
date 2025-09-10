@@ -1,0 +1,35 @@
+#!/bin/bash
+
+while true; do
+  echo
+  echo " Pharmacy System " 
+  echo "1) Add Drug"
+  echo "2) Modify Drug Info"
+  echo "3) Search for Drug"
+  echo "4) Prescribe Drug"
+  echo "5) Exit"
+  read -p "Enter your choice: " choice
+
+  case $choice in
+    1)
+      ./addDrug
+      ;;
+    2)
+      ./modifyDrugInfo
+      ;;
+    3)
+      ./searchDrug
+      ;;
+    4)
+      ./preDrug
+      ;;
+    5)
+      echo "Exiting Pharmacy System. Thank you for using!" 
+      break
+      ;;
+    *)
+      echo "Invalid choice. Please enter a number between 1 and 5 only." 
+      ;;
+  esac
+done
+

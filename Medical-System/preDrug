@@ -1,0 +1,61 @@
+#!/bin/bash
+
+TotalCost=0
+
+while true; do
+  echo
+  read -p "Enter Drug ID or Trade Name (or type 'stop' to finish): " input
+
+  if [[ "$input" == "stop" ]]; then
+    echo "Total Prescription Cost (if user finish): $TotalCost"
+    break
+  fi
+
+  DPresLine=$(grep -i "^$input:" drugs)
+
+  if [[ -z "$DPresLine" ]]; then
+    DPresLine=$(grep -i ":$input:" drugs)
+  fi
+
+  if [[ -z "$DPresLine" ]]; then
+    echo "Drug not found."
+    continue
+  fi
+
+  Drugid=$(echo "$DPresLine" | cut -d: -f1)
+  DScname=$(echo "$DPresLine" | cut -d: -f2)
+  DTSname=$(echo "$DPresLine" | cut -d: -f3)
+  Dprice=$(echo "$DPresLine" | cut -d: -f4)
+  Dmoddate=$(echo "$DPresLine" | cut -d: -f5)
+  Dexpdate=$(echo "$DPresLine" | cut -d: -f6)
+  DrugInfo=$(echo "$DPresLine" | cut -d: -f7)
+
+  echo "Drug ID: $Drugid"
+  echo "Scientific Name: $DScname"
+  echo "Trade Name: $DTSname"
+  echo "Price: $Dprice"
+  echo "Available Quantity: $DrugInfo"
+
+  read -p "Enter quantity to dispense: " Dquan
+
+  if ! [[ "$Dquan" =~ ^[0-9]+$ ]]; then
+    echo "Invalid quantity format."
+    continue
+  fi
+
+  if (( Dquan > DrugInfo )); then
+    echo "Quantity exceeds available stock (choose another item)."
+    continue
+  fi
+
+  NewQty=$((DrugInfo - Dquan))
+  DNewLine="$Drugid:$DScname:$DTSname:$Dprice:$Dmoddate:$Dexpdate:$NewQty"
+
+  grep -v "^$Drugid:" drugs > Dtemp && mv Dtemp drugs
+  echo "$DNewLine" >> drugs
+
+  OneCost=$((Dquan * Dprice))
+  TotalCost=$((TotalCost + OneCost))
+
+  echo "Drug Total dispensed. Cost: $OneCost"
+done

@@ -1,0 +1,56 @@
+#!/bin/bash
+
+while true; do
+  read -p "Hello, Enter Drug ID (only 4 digits): " id
+
+  if grep -q "^$id:" drugs; then
+    echo "The drug already exists. Please choose a unique one."
+    continue
+  fi
+
+  if ! [[ $id =~ ^[0-9]{4}$ ]]; then
+    echo "Sorry, you can only add the ID using 4 digits (numbers)."
+    continue
+  fi
+
+  break
+done
+
+read -p "Enter Scientific Name (letters and - / only): " ScienNa
+if ! [[ $ScienNa =~ ^[A-Za-z/-]+$ ]]; then
+  echo "Please re-write scientific name using only letters, - or /."
+  exit
+fi
+
+read -p "Enter Trade Name (cannot start with number): " trName
+if ! [[ $trName =~ ^[A-Za-z/-][A-Za-z0-9/-]*$ ]]; then
+  echo "Re-write trade name according to constraints."
+  exit
+fi
+
+read -p "Enter Price (digits only): " trprice
+if ! [[ $trprice =~ ^[0-9]+$ ]]; then
+  echo "Re-write the price using digits only."
+  exit
+fi
+
+read -p "Enter Manufacturing Date (dd/mm/yyyy): " manDate
+if ! [[ $manDate =~ ^[0-9]{2}/[0-9]{2}/[0-9]{4}$ ]]; then
+  echo "Re-write the date in correct format (dd/mm/yyyy)."
+  exit
+fi
+
+d=$(echo $manDate | cut -d/ -f1)
+m=$(echo $manDate | cut -d/ -f2)
+y=$(echo $manDate | cut -d/ -f3)
+
+expdate=$(date -d "$y-$m-$d +547 days" +%d/%m/%Y)
+
+read -p "Enter Quantity (in numbers only): " quanTrad
+if ! [[ $quanTrad =~ ^[0-9]+$ ]]; then
+  echo "Quantity must be digits only."
+  exit
+fi
+
+echo "$id:$ScienNa:$trName:$trprice:$manDate:$expdate:$quanTrad" >> drugs
+echo "Drug added successfully."

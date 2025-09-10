@@ -1,0 +1,106 @@
+#!/bin/bash
+
+while true; do
+  echo
+  echo "1) Search by Drug ID"
+  echo "2) Search by Name"
+  echo "3) Search by Expiration Date (Descending)"
+  echo "4) Search by Quantity (Ascending)"
+  echo "5) Back to Main Menu"
+  read -p "Enter your choice: " scho
+
+  case $scho in
+    1)
+      read -p "Enter Drug ID to search: " SearchID
+      ans=$(grep "^$SearchID:" drugs)
+      if [[ -n $ans ]]; then
+        Drugid=$(echo "$ans" | cut -d: -f1)
+        DScname=$(echo "$ans" | cut -d: -f2)
+        DTSname=$(echo "$ans" | cut -d: -f3)
+        Dprice=$(echo "$ans" | cut -d: -f4)
+        Dmoddate=$(echo "$ans" | cut -d: -f5)
+        Dexpdate=$(echo "$ans" | cut -d: -f6)
+        DrugInfo=$(echo "$ans" | cut -d: -f7)
+
+        echo "Drug ID: $Drugid"
+        echo "Scientific Name: $DScname"
+        echo "Trade Name: $DTSname"
+        echo "Price: $Dprice"
+        echo "Manufacturing Date: $Dmoddate"
+        echo "Expiration Date: $Dexpdate"
+        echo "Quantity: $DrugInfo"
+      else
+        echo "Drug ID $SearchID not found."
+      fi
+      ;;
+
+    2)
+      read -p "Enter full or part of Scientific/Trade Name: " name
+      grep -i "$name" drugs | sort -t: -k3 | while read entry; do
+        Drugid=$(echo "$entry" | cut -d: -f1)
+        DScname=$(echo "$entry" | cut -d: -f2)
+        DTSname=$(echo "$entry" | cut -d: -f3)
+        Dprice=$(echo "$entry" | cut -d: -f4)
+        Dmoddate=$(echo "$entry" | cut -d: -f5)
+        Dexpdate=$(echo "$entry" | cut -d: -f6)
+        DrugInfo=$(echo "$entry" | cut -d: -f7)
+
+        echo "Drug ID: $Drugid"
+        echo "Scientific Name: $DScname"
+        echo "Trade Name: $DTSname"
+        echo "Price: $Dprice"
+        echo "Manufacturing Date: $Dmoddate"
+        echo "Expiration Date: $Dexpdate"
+        echo "Quantity: $DrugInfo"
+      done
+      ;;
+
+    3)
+      sort -t: -k6 -r drugs | while read entry; do
+        Drugid=$(echo "$entry" | cut -d: -f1)
+        DScname=$(echo "$entry" | cut -d: -f2)
+        DTSname=$(echo "$entry" | cut -d: -f3)
+        Dprice=$(echo "$entry" | cut -d: -f4)
+        Dmoddate=$(echo "$entry" | cut -d: -f5)
+        Dexpdate=$(echo "$entry" | cut -d: -f6)
+        DrugInfo=$(echo "$entry" | cut -d: -f7)
+
+        echo "Drug ID: $Drugid"
+        echo "Scientific Name: $DScname"
+        echo "Trade Name: $DTSname"
+        echo "Price: $Dprice"
+        echo "Manufacturing Date: $Dmoddate"
+        echo "Expiration Date: $Dexpdate"
+        echo "Quantity: $DrugInfo"
+      done
+      ;;
+
+    4)
+      sort -t: -k7 -n drugs | while read entry; do
+        Drugid=$(echo "$entry" | cut -d: -f1)
+        DScname=$(echo "$entry" | cut -d: -f2)
+        DTSname=$(echo "$entry" | cut -d: -f3)
+        Dprice=$(echo "$entry" | cut -d: -f4)
+        Dmoddate=$(echo "$entry" | cut -d: -f5)
+        Dexpdate=$(echo "$entry" | cut -d: -f6)
+        DrugInfo=$(echo "$entry" | cut -d: -f7)
+
+        echo "Drug ID: $Drugid"
+        echo "Scientific Name: $DScname"
+        echo "Trade Name: $DTSname"
+        echo "Price: $Dprice"
+        echo "Manufacturing Date: $Dmoddate"
+        echo "Expiration Date: $Dexpdate"
+        echo "Quantity: $DrugInfo"
+      done
+      ;;
+
+    5)
+      break
+      ;;
+
+    *)
+      echo "Incorrect choice"
+      ;;
+  esac
+done
